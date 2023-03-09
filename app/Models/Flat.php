@@ -1,0 +1,35 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+
+class Flat extends Model
+{
+
+    protected $guarded = ['id'];
+
+    public function floor(): BelongsTo
+    {
+        return $this->belongsTo(Floor::class, 'floor_id', 'id');
+    }
+    public function section(): BelongsTo
+    {
+        return $this->belongsTo(Section::class, 'section_id', 'id');
+    }
+    public function block(): BelongsTo
+    {
+        return $this->belongsTo(Block::class, 'block_id', 'id');
+    }
+    public function project(): BelongsTo
+    {
+        return $this->belongsTo(Project::class, 'project_id', 'id');
+    }
+    public function documents(): MorphMany
+    {
+        return $this->morphMany(Document::class, 'documentable');
+    }
+}

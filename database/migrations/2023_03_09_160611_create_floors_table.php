@@ -11,18 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('floors', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('surname');
-            $table->string('father_name')->nullable();
-
-            $table->string('email')->unique();
-            $table->string('phone')->nullable();
-            $table->string('password');
-            $table->boolean('active')->default(true);
-
-            $table->rememberToken();
+            $table->foreignId('project_id')->constrained('projects')->onDelete('cascade');
+            $table->foreignId('block_id')->constrained('blocks')->onDelete('cascade');
+            $table->foreignId('section_id')->constrained('sections')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -32,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('floors');
     }
 };
