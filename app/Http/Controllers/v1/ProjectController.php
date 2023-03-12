@@ -4,9 +4,11 @@ namespace App\Http\Controllers\v1;
 
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\BlockResource;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\UserResource;
 use App\Imports\ProjectImport;
+use App\Models\Block;
 use App\Models\Project;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -82,9 +84,11 @@ class ProjectController extends Controller
 
     public function destroy($id)
     {
-        $project = Project::find($id);
-        //check if project did not have relations
-
+        $project = Project::findOrFail($id);
+        $project->delete();
+        return response()->json([
+            'message' => 'Project deleted successfully'
+        ]);
     }
 
     public function import(Request $request, $project_id)
@@ -101,5 +105,14 @@ class ProjectController extends Controller
         }
     }
 
-
+    public function board(Request $request, $project_id)
+    {
+        $project = Project::query()
+            ->with(['blocks.sections.floors.flats', 'files'])
+            ->where([
+                ['id', '=', $project_id]
+            ])
+            ->firstOrFail();
+        return new ProjectResource($project);
+    }
 }

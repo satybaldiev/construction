@@ -18,14 +18,6 @@ class Block extends Model
     {
         return $this->hasMany(Section::class, 'block_id', 'id');
     }
-    public function floors(): HasMany
-    {
-        return $this->hasMany(Floor::class, 'block_id', 'id');
-    }
-    public function flats(): HasMany
-    {
-        return $this->hasMany(Flat::class, 'block_id', 'id');
-    }
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class, 'project_id', 'id');

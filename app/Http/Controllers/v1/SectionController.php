@@ -6,10 +6,12 @@ namespace App\Http\Controllers\v1;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\BlockResource;
 use App\Http\Resources\ProjectResource;
+use App\Http\Resources\SectionResource;
 use App\Http\Resources\UserResource;
 use App\Imports\ProjectImport;
 use App\Models\Block;
 use App\Models\Project;
+use App\Models\Section;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,22 +21,27 @@ use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
-class BlockController extends Controller
+class SectionController extends Controller
 {
 
     public function store(Request $request, $project_id)
     {
         $request->validate([
             'name' => 'required',
+            'block_id' => 'required',
         ]);
-        $project           = Project::findOrFail($project_id);
-        $block             = new Block();
-        $block->name       = $request->input('name');
-        $block->project_id = $project->id;
-        $block->save();
+        $block           = Block::where([
+            ['id', '=', $request->input('block_id')],
+            ['project_id', '=', $project_id]
+        ])->firstOrFail();
+        $section            = new Section();
+        $section->name      = $request->input('name');
+        $section->project_id = $project_id;
+        $section->block_id  = $block->id;
+        $section->save();
         return response()->json([
-            'message' => 'Block created successfully',
-            'block'   => BlockResource::make($block)
+            'message' => 'Section created successfully',
+            'section'   => SectionResource::make($section)
         ], ResponseAlias::HTTP_CREATED);
     }
 
@@ -42,41 +49,35 @@ class BlockController extends Controller
     {
         $request->validate([
             'name' => 'required',
+            'block_id' => 'required',
         ]);
-        $block = Block::query()->where([
+        $block           = Block::where([
+            ['id', '=', $request->input('block_id')],
+            ['project_id', '=', $project_id]
+        ])->firstOrFail();
+        $section = Section::query()->where([
             ['id', '=', $id],
             ['project_id', '=', $project_id]
         ])->firstOrFail();
-
-        $block->name = $request->input('name');
-        $block->save();
+        $section->name      = $request->input('name');
+        $section->block_id  = $block->id;
+        $section->save();
         return response()->json([
-            'message' => 'Block updated successfully',
-            'block'   => BlockResource::make($block)
+            'message' => 'Section updated successfully',
+            'section'   => SectionResource::make($section)
         ]);
+
     }
 
     public function destroy(Request $request, $project_id, $id)
     {
-        $block = Block::query()->where([
+        $section = Section::query()->where([
             ['id', '=', $id],
             ['project_id', '=', $project_id]
         ])->firstOrFail();
-        $block->delete();
+        $section->delete();
         return response()->json([
-            'message' => 'Block deleted successfully',
+            'message' => 'Section deleted successfully',
         ]);
-    }
-
-    public function board(Request $request, $project_id, $block_id)
-    {
-        $block = Block::query()
-            ->with(['sections.floors.flats', 'files'])
-            ->where([
-                ['id', '=', $block_id],
-                ['project_id', '=', $project_id]
-            ])
-            ->firstOrFail();
-        return new BlockResource($block);
     }
 }

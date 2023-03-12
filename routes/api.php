@@ -3,6 +3,7 @@
 use App\Http\Controllers\v1\AuthController;
 use App\Http\Controllers\v1\BlockController;
 use App\Http\Controllers\v1\ProjectController;
+use App\Http\Controllers\v1\SectionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -22,9 +23,13 @@ Route::group(['prefix' => 'v1'], function () {
 
     Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::post('projects/{project}/import', [ProjectController::class, 'import']);
+        Route::get('projects/{project}/board', [ProjectController::class, 'board']);
         Route::apiResource('projects', ProjectController::class);
         Route::group(['prefix' => 'projects/{project}'], function () {
-            Route::apiResource('blocks', BlockController::class)->except('index');
+            Route::apiResource('blocks', BlockController::class)->except('index', 'show');
+            Route::apiResource('sections', SectionController::class)->except('index', 'show');
+            Route::apiResource('floors', BlockController::class)->except('index', 'show');
+            Route::apiResource('flats', BlockController::class)->except('index', 'show');
         });
     });
 

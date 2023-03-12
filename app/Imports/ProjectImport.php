@@ -28,11 +28,6 @@ class ProjectImport implements ToCollection, WithStartRow
      */
     public function collection(Collection $collection)
     {
-        //    const RESIDENTAL = 'residential';
-        //    const COMMERCIAL = 'commercial';
-        //    const STOREROOM = 'storeroom';
-        //    const PARKING = 'parking';
-        //    const OTHER = 'other';
         $type = [
             'К' => FlatType::COMMERCIAL,
             'Ж' => FlatType::RESIDENTAL,
@@ -49,7 +44,6 @@ class ProjectImport implements ToCollection, WithStartRow
                 );
                 $section = Section::updateOrCreate(
                     [
-                        'project_id' => $this->project_id,
                         'block_id'   => $block->id,
                         'name'       => $row[1]
                     ],
@@ -57,8 +51,6 @@ class ProjectImport implements ToCollection, WithStartRow
 
                 $floor = Floor::updateOrCreate(
                     [
-                        'project_id' => $this->project_id,
-                        'block_id'   => $block->id,
                         'section_id' => $section->id,
                         'name'       => $row[2]
                     ]
@@ -75,9 +67,6 @@ class ProjectImport implements ToCollection, WithStartRow
                 }
                 $flat = Flat::updateOrCreate(
                     [
-                        'project_id' => $this->project_id,
-                        'block_id'   => $block->id,
-                        'section_id' => $section->id,
                         'floor_id' => $floor->id,
                         'name'     => $row[3]
                     ],

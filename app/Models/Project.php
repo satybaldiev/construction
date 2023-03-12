@@ -21,18 +21,6 @@ class Project extends Model
     {
         return $this->hasMany(Block::class, 'project_id', 'id');
     }
-    public function sections(): HasMany
-    {
-        return $this->hasMany(Section::class, 'project_id', 'id');
-    }
-    public function floors(): HasMany
-    {
-        return $this->hasMany(Floor::class, 'project_id', 'id');
-    }
-    public function flats(): HasMany
-    {
-        return $this->hasMany(Flat::class, 'project_id', 'id');
-    }
 
     public function plans(): HasMany
     {
