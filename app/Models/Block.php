@@ -14,9 +14,10 @@ class Block extends Model
 
     protected $guarded = ['id'];
 
-    public function sections(): HasMany
+
+    public function flats(): HasMany
     {
-        return $this->hasMany(Section::class, 'block_id', 'id');
+        return $this->hasMany(Flat::class, 'block_id', 'id');
     }
     public function project(): BelongsTo
     {

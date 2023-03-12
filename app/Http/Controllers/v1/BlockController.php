@@ -34,7 +34,7 @@ class BlockController extends Controller
         $block->save();
         return response()->json([
             'message' => 'Block created successfully',
-            'block'   => BlockResource::make($block)
+            'data'   => BlockResource::make($block)
         ], ResponseAlias::HTTP_CREATED);
     }
 
@@ -52,7 +52,7 @@ class BlockController extends Controller
         $block->save();
         return response()->json([
             'message' => 'Block updated successfully',
-            'block'   => BlockResource::make($block)
+            'data'   => BlockResource::make($block)
         ]);
     }
 
@@ -71,7 +71,7 @@ class BlockController extends Controller
     public function board(Request $request, $project_id, $block_id)
     {
         $block = Block::query()
-            ->with(['sections.floors.flats', 'files'])
+            ->with(['flats', 'files'])
             ->where([
                 ['id', '=', $block_id],
                 ['project_id', '=', $project_id]

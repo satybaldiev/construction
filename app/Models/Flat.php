@@ -12,14 +12,6 @@ class Flat extends Model
 
     protected $guarded = ['id'];
 
-    public function floor(): BelongsTo
-    {
-        return $this->belongsTo(Floor::class, 'floor_id', 'id');
-    }
-    public function section(): BelongsTo
-    {
-        return $this->belongsTo(Section::class, 'section_id', 'id');
-    }
     public function block(): BelongsTo
     {
         return $this->belongsTo(Block::class, 'block_id', 'id');

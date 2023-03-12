@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\v1\AuthController;
 use App\Http\Controllers\v1\BlockController;
+use App\Http\Controllers\v1\FlatController;
 use App\Http\Controllers\v1\ProjectController;
 use App\Http\Controllers\v1\SectionController;
 use Illuminate\Http\Request;
@@ -27,9 +28,9 @@ Route::group(['prefix' => 'v1'], function () {
         Route::apiResource('projects', ProjectController::class);
         Route::group(['prefix' => 'projects/{project}'], function () {
             Route::apiResource('blocks', BlockController::class)->except('index', 'show');
-            Route::apiResource('sections', SectionController::class)->except('index', 'show');
-            Route::apiResource('floors', BlockController::class)->except('index', 'show');
-            Route::apiResource('flats', BlockController::class)->except('index', 'show');
+            Route::group(['prefix' => 'blocks/{block}'], function () {
+                Route::apiResource('flats', FlatController::class)->except('index');
+            });
         });
     });
 

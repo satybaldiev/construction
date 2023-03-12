@@ -22,8 +22,6 @@ class ProjectResource extends JsonResource
             'estimated_finish_date' => $this->estimated_finish_date,
             'project_details'       => $this->project_details,
             'blocks'                => BlockResource::collection($this->whenLoaded('blocks')),
-            'sections'              => SectionResource::collection($this->whenLoaded('sections')),
-            'floors'                => FloorResource::collection($this->whenLoaded('floors')),
             'flats'                 => FlatResource::collection($this->whenLoaded('flats')),
             'files'                 => FileResource::collection($this->whenLoaded('files')),
             'blocks_count'          => $this->whenCounted('blocks'),

@@ -26,7 +26,12 @@ return new class extends Migration
             $table->enum('type', FlatType::getAllValues())->default(FlatType::RESIDENTAL);
             $table->enum('status', FlatStatus::getAllValues())->default(FlatStatus::FREE);
 
-            $table->foreignId('floor_id')->constrained('floors')->onDelete('cascade');
+            $table->foreignId('project_id')->constrained('projects')->onDelete('cascade');
+            $table->foreignId('block_id')->constrained('blocks')->onDelete('cascade');
+
+            $table->string('section');
+            $table->string('floor');
+
             $table->foreignId('plan_id')->nullable()->constrained('plans')->nullOnDelete();
             $table->text('notes')->nullable();
 

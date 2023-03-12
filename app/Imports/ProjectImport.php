@@ -5,9 +5,7 @@ namespace App\Imports;
 use App\Enum\FlatType;
 use App\Models\Block;
 use App\Models\Flat;
-use App\Models\Floor;
 use App\Models\Plan;
-use App\Models\Section;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
@@ -42,19 +40,6 @@ class ProjectImport implements ToCollection, WithStartRow
                         'name'       => $row[0]
                     ]
                 );
-                $section = Section::updateOrCreate(
-                    [
-                        'block_id'   => $block->id,
-                        'name'       => $row[1]
-                    ],
-                );
-
-                $floor = Floor::updateOrCreate(
-                    [
-                        'section_id' => $section->id,
-                        'name'       => $row[2]
-                    ]
-                );
 
                 $plan = null;
                 if (isset($row[7])) {
@@ -67,7 +52,10 @@ class ProjectImport implements ToCollection, WithStartRow
                 }
                 $flat = Flat::updateOrCreate(
                     [
-                        'floor_id' => $floor->id,
+                        'project_id' => $this->project_id,
+                        'block_id'   => $block->id,
+                        'section' => $row[1],
+                        'floor' => $row[2],
                         'name'     => $row[3]
                     ],
                     [

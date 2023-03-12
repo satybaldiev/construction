@@ -78,7 +78,7 @@ class ProjectController extends Controller
         $project->save();
         return response()->json([
             'message' => 'Project updated successfully',
-            'project' => ProjectResource::make($project)
+            'data' => ProjectResource::make($project)
         ]);
     }
 
@@ -108,7 +108,7 @@ class ProjectController extends Controller
     public function board(Request $request, $project_id)
     {
         $project = Project::query()
-            ->with(['blocks.sections.floors.flats', 'files'])
+            ->with(['blocks.flats', 'files'])
             ->where([
                 ['id', '=', $project_id]
             ])
