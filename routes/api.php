@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\v1\AuthController;
+use App\Http\Controllers\v1\BlockController;
 use App\Http\Controllers\v1\ProjectController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -20,7 +21,11 @@ Route::group(['prefix' => 'v1'], function () {
     Route::post('login', [AuthController::class, 'login']);
 
     Route::group(['middleware' => 'auth:sanctum'], function () {
+        Route::post('projects/{project}/import', [ProjectController::class, 'import']);
         Route::apiResource('projects', ProjectController::class);
+        Route::group(['prefix' => 'projects/{project}'], function () {
+            Route::apiResource('blocks', BlockController::class)->except('index');
+        });
     });
 
 });

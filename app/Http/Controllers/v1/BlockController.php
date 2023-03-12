@@ -4,9 +4,11 @@ namespace App\Http\Controllers\v1;
 
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\BlockResource;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\UserResource;
 use App\Imports\ProjectImport;
+use App\Models\Block;
 use App\Models\Project;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -17,16 +19,8 @@ use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
-class ProjectController extends Controller
+class BlockController extends Controller
 {
-    public function index(Request $request)
-    {
-        $projects = Project::query()
-            ->withCount(['blocks', 'flats'])
-            ->orderBy($request->input('sort_by', 'id'), $request->input('sort_order', 'desc'))
-            ->paginate($request->input('per_page', 20));
-        return ProjectResource::collection($projects);
-    }
 
     public function store(Request $request)
     {
@@ -52,17 +46,16 @@ class ProjectController extends Controller
         ], ResponseAlias::HTTP_CREATED);
     }
 
-    public function show($id)
+    public function show($project_id,$block_id)
     {
-        $project = Project::query()
-            ->with(['blocks' => function ($query) {
-                return $query->withCount('flats');
-            }, 'files'])
+        $block = Block::query()
+            ->with(['sections.floors.flats','files'])
             ->where([
-                ['id', '=', $id],
+                ['id', '=', $block_id],
+                ['project_id', '=', $project_id]
             ])
             ->firstOrFail();
-        return new ProjectResource($project);
+        return new BlockResource($block);
     }
 
     public function update(Request $request, $id)
@@ -83,23 +76,16 @@ class ProjectController extends Controller
     public function destroy($id)
     {
         $project = Project::find($id);
-        //check if project did not have relations
-
-    }
-
-    public function import(Request $request, $project_id)
-    {
-        $this->validate($request, [
-            'file' => 'required|mimes:xlsx'
-        ]);
-        $project = Project::findOrFail($project_id);
-        if ($request->hasFile('file')) {
-            Excel::import(new ProjectImport($project_id), $request->file('file')->getRealPath());
+        //check if project did not have any relations
+        if ($project->blocks()->count() == 0 && $project->flats()->count() == 0 && $project->sections()->count() == 0 && $project->floors()->count() == 0) {
+            $project->delete();
             return response()->json([
-                'message' => 'File imported successfully'
+                'message' => 'Project deleted successfully'
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Project cannot be deleted because it has relations'
             ]);
         }
     }
-
-
 }
