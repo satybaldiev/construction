@@ -5,6 +5,7 @@ namespace App\Http\Controllers\v1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\BlockCreateRequest;
+use App\Http\Resources\BlockBoardResource;
 use App\Http\Resources\BlockResource;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\UserResource;
@@ -67,6 +68,6 @@ class BlockController extends Controller
                 ['project_id', '=', $project_id]
             ])
             ->firstOrFail();
-        return new BlockResource($block);
+        return new BlockBoardResource($block);
     }
 }

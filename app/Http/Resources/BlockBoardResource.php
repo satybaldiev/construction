@@ -16,9 +16,7 @@ class BlockBoardResource extends JsonResource
     {
         $this->loadMissing(['flats']);
         return [
-            'id'         => $this->id,
-            'block_name' => $this->block_name,
-            'project_id' => $this->project_id,
+            'block_name' => $this->name,
             'flats'      => FlatResource::collection($this->flats)->groupBy(['section', 'floor']),
         ];
     }

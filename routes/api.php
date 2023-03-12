@@ -23,15 +23,18 @@ Route::group(['prefix' => 'v1'], function () {
     Route::post('login', [AuthController::class, 'login']);
 
     Route::group(['middleware' => 'auth:sanctum'], function () {
-        Route::post('projects/{project}/import', [ProjectController::class, 'import']);
-        Route::get('projects/{project}/board', [ProjectController::class, 'board']);
-        Route::apiResource('projects', ProjectController::class);
         Route::group(['prefix' => 'projects/{project}'], function () {
-            Route::apiResource('blocks', BlockController::class)->except('index', 'show');
+            Route::post('import', [ProjectController::class, 'import']);
+            Route::get('board', [ProjectController::class, 'board']);
             Route::group(['prefix' => 'blocks/{block}'], function () {
+                Route::get('board', [BlockController::class, 'board']);
                 Route::apiResource('flats', FlatController::class)->except('index');
             });
+            Route::apiResource('blocks', BlockController::class)->except('index', 'show');
+
         });
+        Route::apiResource('projects', ProjectController::class);
+
     });
 
 });
