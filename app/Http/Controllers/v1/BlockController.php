@@ -4,6 +4,7 @@ namespace App\Http\Controllers\v1;
 
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\BlockCreateRequest;
 use App\Http\Resources\BlockResource;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\UserResource;
@@ -22,34 +23,24 @@ use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 class BlockController extends Controller
 {
 
-    public function store(Request $request, $project_id)
+    public function store(BlockCreateRequest $request, $project_id)
     {
-        $request->validate([
-            'name' => 'required',
-        ]);
         $project           = Project::findOrFail($project_id);
-        $block             = new Block();
-        $block->name       = $request->input('name');
-        $block->project_id = $project->id;
-        $block->save();
+        $block = $project->blocks()->create($request->validated());
         return response()->json([
             'message' => 'Block created successfully',
             'data'   => BlockResource::make($block)
         ], ResponseAlias::HTTP_CREATED);
     }
 
-    public function update(Request $request, $project_id, $id)
+    public function update(BlockCreateRequest $request, $project_id, $id)
     {
-        $request->validate([
-            'name' => 'required',
-        ]);
+
         $block = Block::query()->where([
             ['id', '=', $id],
             ['project_id', '=', $project_id]
         ])->firstOrFail();
-
-        $block->name = $request->input('name');
-        $block->save();
+        $block->update($request->validated());
         return response()->json([
             'message' => 'Block updated successfully',
             'data'   => BlockResource::make($block)
@@ -58,11 +49,10 @@ class BlockController extends Controller
 
     public function destroy(Request $request, $project_id, $id)
     {
-        $block = Block::query()->where([
+        Block::query()->where([
             ['id', '=', $id],
             ['project_id', '=', $project_id]
-        ])->firstOrFail();
-        $block->delete();
+        ])->firstOrFail()->delete();
         return response()->json([
             'message' => 'Block deleted successfully',
         ]);

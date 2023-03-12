@@ -4,7 +4,9 @@ namespace App\Http\Controllers\v1;
 
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ProjectCreateRequest;
 use App\Http\Resources\BlockResource;
+use App\Http\Resources\ProjectBoardResource;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\UserResource;
 use App\Imports\ProjectImport;
@@ -30,24 +32,9 @@ class ProjectController extends Controller
         return ProjectResource::collection($projects);
     }
 
-    public function store(Request $request)
+    public function store(ProjectCreateRequest $request)
     {
-        $request->validate([
-            'name'                  => 'required',
-            'address'               => 'nullable',
-            'start_date'            => 'nullable|date',
-            'estimated_finish_date' => 'nullable|date',
-            'project_details'       => 'nullable|array',
-        ]);
-        $project                        = new Project();
-        $project->name                  = $request->input('name');
-        $project->address               = $request->input('address');
-        $project->start_date            = $request->input('start_date');
-        $project->estimated_finish_date = $request->input('estimated_finish_date');
-        $project->project_details       = $request->input('project_details') ? json_encode($request->input('project_details')) : null;
-        $project->save();
-
-
+        $project = Project::create($request->validated());
         return response()->json([
             'message' => __('Project created successfully'),
             'data'    => ProjectResource::make($project)
@@ -67,25 +54,19 @@ class ProjectController extends Controller
         return new ProjectResource($project);
     }
 
-    public function update(Request $request, $id)
+    public function update(ProjectCreateRequest $request, $id)
     {
-        $project                        = Project::findOrFail($id);
-        $project->name                  = $request->input('name');
-        $project->address               = $request->input('address');
-        $project->start_date            = $request->input('start_date');
-        $project->estimated_finish_date = $request->input('estimated_finish_date');
-        $project->project_details       = $request->input('project_details');
-        $project->save();
+        $project = Project::findOrFail($id);
+        $project->update($request->validated());
         return response()->json([
             'message' => 'Project updated successfully',
-            'data' => ProjectResource::make($project)
+            'data'    => ProjectResource::make($project)
         ]);
     }
 
     public function destroy($id)
     {
-        $project = Project::findOrFail($id);
-        $project->delete();
+        Project::findOrFail($id)->delete();
         return response()->json([
             'message' => 'Project deleted successfully'
         ]);
@@ -96,7 +77,7 @@ class ProjectController extends Controller
         $this->validate($request, [
             'file' => 'required|mimes:xlsx'
         ]);
-        $project = Project::findOrFail($project_id);
+        Project::findOrFail($project_id);
         if ($request->hasFile('file')) {
             Excel::import(new ProjectImport($project_id), $request->file('file')->getRealPath());
             return response()->json([
@@ -113,6 +94,6 @@ class ProjectController extends Controller
                 ['id', '=', $project_id]
             ])
             ->firstOrFail();
-        return new ProjectResource($project);
+        return new ProjectBoardResource($project);
     }
 }

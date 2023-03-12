@@ -22,7 +22,7 @@ class FlatCreateRequest extends FormRequest
             'section'     => 'required',
             'floor'       => 'required',
             'notes'       => 'nullable|string',
-            'plan_id'     => 'nullable|integer|exists:plans,id',
+            'plan_id'     => 'nullable|integer',
         ];
     }
 }

@@ -43,26 +43,12 @@ class FlatController extends Controller
 
     public function update(FlatCreateRequest $request, $project_id, $block_id, $id)
     {
-        $project = Project::findOrFail($project_id);
-        $block   = Block::query()->where([
-            ['id', '=', $block_id],
-            ['project_id', '=', $project_id]
-        ])->firstOrFail();
         $flat = Flat::query()->where([
             ['id', '=', $id],
-            ['project_id', '=', $project->id],
-            ['block_id', '=', $block->id]
+            ['project_id', '=', $project_id],
+            ['block_id', '=', $block_id]
         ])->firstOrFail();
         $flat->update($request->validated());
-        $flat->name        = $request->input('name');
-        $flat->area        = $request->input('area');
-        $flat->room_count  = $request->input('room_count');
-        $flat->type        = $request->input('type');
-        $flat->section     = $request->input('section');
-        $flat->floor       = $request->input('floor');
-        $flat->notes       = $request->input('notes');
-        $flat->plan_id     = $request->input('plan_id') ?? null;
-        $flat->save();
         return response()->json([
             'message' => 'Flat updated successfully',
             'data'    => FlatResource::make($flat)
@@ -71,12 +57,11 @@ class FlatController extends Controller
 
     public function destroy(Request $request, $project_id, $block_id, $id)
     {
-        $flat = Flat::query()->where([
+        Flat::query()->where([
             ['id', '=', $id],
             ['project_id', '=', $project_id],
             ['block_id', '=', $block_id]
-        ])->firstOrFail();
-        $flat->delete();
+        ])->firstOrFail()->delete();
         return response()->json([
             'message' => 'Flat deleted successfully',
         ], ResponseAlias::HTTP_OK);
