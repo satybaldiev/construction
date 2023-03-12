@@ -12,7 +12,7 @@ class Floor extends Model
     protected $guarded = ['id'];
     public function flats(): HasMany
     {
-        return $this->hasMany(Flat::class, 'project_id', 'id');
+        return $this->hasMany(Flat::class, 'floor_id', 'id');
     }
     public function section(): BelongsTo
     {

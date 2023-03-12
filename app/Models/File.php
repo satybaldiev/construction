@@ -6,11 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-class Images extends Model
+class File extends Model
 {
     protected $guarded = ['id'];
 
-    public function imageable(): MorphTo
+    public function fileable(): MorphTo
     {
         return $this->morphTo();
     }

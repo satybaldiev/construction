@@ -28,8 +28,12 @@ class Flat extends Model
     {
         return $this->belongsTo(Project::class, 'project_id', 'id');
     }
-    public function documents(): MorphMany
+    public function plan(): BelongsTo
     {
-        return $this->morphMany(Document::class, 'documentable');
+        return $this->belongsTo(Plan::class, 'plan_id', 'id');
+    }
+    public function files(): MorphMany
+    {
+        return $this->morphMany(File::class, 'fileable');
     }
 }

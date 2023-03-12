@@ -9,7 +9,13 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Project extends Model
 {
-    protected $guarded = ['id'];
+    protected $fillable = [
+        'name',
+        'address',
+        'start_date',
+        'estimated_finish_date',
+        'project_details',
+    ];
 
     public function blocks(): HasMany
     {
@@ -27,14 +33,15 @@ class Project extends Model
     {
         return $this->hasMany(Flat::class, 'project_id', 'id');
     }
-    public function images(): MorphMany
+
+    public function plans(): HasMany
     {
-        return $this->morphMany(Images::class, 'imageable');
+        return $this->hasMany(Plan::class, 'project_id', 'id');
     }
 
-    public function documents(): MorphMany
+    public function files(): MorphMany
     {
-        return $this->morphMany(Document::class, 'documentable');
+        return $this->morphMany(File::class, 'fileable');
     }
 
 }

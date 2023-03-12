@@ -19,8 +19,8 @@ class Agreement extends Model
         return $this->belongsTo(Customer::class, 'customer_id', 'id');
     }
 
-    public function documents(): MorphMany
+    public function files(): MorphMany
     {
-        return $this->morphMany(Document::class, 'documentable');
+        return $this->morphMany(File::class, 'fileable');
     }
 }

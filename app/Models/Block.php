@@ -11,28 +11,27 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Block extends Model
 {
-    use softDeletes;
 
     protected $guarded = ['id'];
 
     public function sections(): HasMany
     {
-        return $this->hasMany(Section::class, 'project_id', 'id');
+        return $this->hasMany(Section::class, 'block_id', 'id');
     }
     public function floors(): HasMany
     {
-        return $this->hasMany(Floor::class, 'project_id', 'id');
+        return $this->hasMany(Floor::class, 'block_id', 'id');
     }
     public function flats(): HasMany
     {
-        return $this->hasMany(Flat::class, 'project_id', 'id');
+        return $this->hasMany(Flat::class, 'block_id', 'id');
     }
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class, 'project_id', 'id');
     }
-    public function images(): MorphMany
+    public function files(): MorphMany
     {
-        return $this->morphMany(Images::class, 'imageable');
+        return $this->morphMany(File::class, 'fileable');
     }
 }

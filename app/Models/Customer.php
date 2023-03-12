@@ -19,9 +19,9 @@ class Customer extends Model
     {
         return $this->hasMany(Agreement::class);
     }
-    public function documents(): MorphMany
+    public function files(): MorphMany
     {
-        return $this->morphMany(Document::class, 'documentable');
+        return $this->morphMany(File::class, 'fileable');
     }
 
 }
